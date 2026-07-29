@@ -44,8 +44,8 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 6: Hauptsteuerung & GitHub Actions Release Automation (Node 24 / Lockfile Fix)
+### [x] Meilenstein 6: Hauptsteuerung & GitHub Actions Release Automation (Korrektur der Paket-Version)
 - **Erfolgreich umgesetzt**:
   - `src/index.ts`: Orchestrierung aller Komponenten, Laden/Speichern von Zugangsdaten, periodisches State-Polling (alle 30s) und Befehling.
-  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml): Aktualisiert auf **Node 24** (Behebung des Node 20 Deprecation Warnings) und Umstellung auf `npm install` mit beiliegender `package-lock.json` zur fehlerfreien Ausführung auf GitHub Actions Runnern.
+  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml): Auf Node 24 aktualisiert. Korrektur der `@busch-jaeger/free-at-home` Paketversion auf `^0.36.0` in `package.json` und `package-lock.json`.
   - `README.md`: Ausführliche Installations- und Bedienungsanleitung für das Busch-Jaeger free@home SysAP 2 System.

@@ -25,7 +25,7 @@
   "author": "Stefan Seyerl",
   "license": "MIT",
   "dependencies": {
-    "@busch-jaeger/free-at-home": "^1.1.1",
+    "@busch-jaeger/free-at-home": "^0.36.0",
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "express": "^4.21.2"
