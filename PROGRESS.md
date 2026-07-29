@@ -17,7 +17,7 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 ### [x] Meilenstein 2: Projekt-Setup & Manifest-Erstellung (SysAP Validierung)
 - **Erfolgreich umgesetzt**:
   - Node.js & TypeScript Projekt-Konfiguration (`package.json`, `tsconfig.json`, `package-lock.json`).
-  - Erstellung der SysAP Addon-Manifestdatei `free-at-home-metadata.json` mit allen vom SysAP verlangten Attributen (`apiVersion: "1.0"`, `id`, `executable: "dist/index.js"`, `type: "node"`, `webUi`, `virtualDevices`, `permissions`).
+  - Erstellung der SysAP Addon-Manifestdatei `free-at-home-metadata.json` mit allen vom SysAP verlangten Attributen (`apiVersion: "1.0"`, `id`, `executable: "dist/index.js"`, `type: "node"`, `web`, `webUi`, `virtualDevices`, `permissions`).
 
 ---
 
@@ -44,8 +44,7 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 6: GitHub CLI Release Automation (YAML Syntax Fix)
+### [x] Meilenstein 6: Release Bump auf v1.0.1 & Packaging Erklärung
 - **Erfolgreich umgesetzt**:
-  - `src/index.ts`: Orchestrierung aller Komponenten, Laden/Speichern von Zugangsdaten, periodisches State-Polling (alle 30s) und Befehlsrouting.
-  - Standalone Single-File Bundle mit `@vercel/ncc`: Kompiliert gesamten TypeScript-Code & alle Abhängigkeiten in eine einzige `dist/index.js`-Datei.
-  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml): YAML-Syntaxfehler bei mehrzeiligen Strings behoben. GitHub CLI (`gh release create` / `upload`) läuft nun 100% syntaktisch valide durch.
+  - Versionierung in `package.json`, `package-lock.json` und `free-at-home-metadata.json` auf `1.0.1` angehoben.
+  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml): GitHub CLI `gh release create` / `upload` erstellt bei Push von Version `1.0.1` das neue GitHub Release `v1.0.1` inklusive des direkten ZIP-Downloads (`somfy-freeathome-addon-v1.0.1.zip`).

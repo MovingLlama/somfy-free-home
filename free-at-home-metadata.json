@@ -2,13 +2,16 @@
   "apiVersion": "1.0",
   "id": "somfy-connectivity-kit-addon",
   "name": "Somfy Connectivity Kit (1870755) Integration",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "node",
   "executable": "dist/index.js",
   "main": "dist/index.js",
   "entryPoint": "dist/index.js",
   "description": "Integration für Somfy 1870755 Connectivity Kit: Bindet Somfy Rollläden, Fenster und Markisen als virtuelle Geräte in Busch-Jaeger free@home ein.",
   "author": "Stefan Seyerl",
+  "web": {
+    "port": 8080
+  },
   "webUi": {
     "port": 8080,
     "path": "/"

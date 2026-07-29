@@ -1,6 +1,6 @@
 {
   "name": "somfy-freeathome-addon",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Busch-Jaeger free@home SysAP 2 Addon for Somfy 1870755 Connectivity Kit (Rollläden, Fenster, Markisen)",
   "main": "dist/index.js",
   "scripts": {
