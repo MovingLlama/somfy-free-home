@@ -38,13 +38,13 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 5: Web UI Konfigurations-Interface
+### [x] Meilenstein 5: Web UI Konfigurations-Interface & Standalone API Modus
 - **Erfolgreich umgesetzt**:
   - `src/web/server.ts`: Express-basierte Admin-Oberfläche auf Port 8080 zur bequemen Eingabe der Somfy Account-Zugangsdaten (E-Mail/Passwort), Verbindungsprüfung und tabellarischen Übersicht aller gekoppelten Somfy Rollläden, Fenster und Markisen.
+  - Standalone-Betrieb unterstützt: Das Addon kann direkt im SysAP ODER extern (z. B. Docker / Raspberry Pi / PC) laufen.
 
 ---
 
-### [x] Meilenstein 6: Vollautomatische Release-Neuerstellung bei jedem Push & chmod 755
+### [x] Meilenstein 6: Clean Filename ZIP & Automated Releases
 - **Erfolgreich umgesetzt**:
-  - Automatische Erzeugung eines **einzigartigen neues GitHub Release bei JEDEM Push** durch anhängen der Build-Nummer (`v1.0.1.1`, `v1.0.1.2` etc.).
-  - Explizites Setzen von Ausführungsrechten (`chmod -R 755`) für Dateipfade im ZIP-Archiv für SysAP-Containerkompatibilität.
+  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml) erstellt nun zusätzlich die Datei **`somfy-freeathome-addon.zip`** ohne Punkte im Dateinamen, um strikte Regex-Filter von älteren SysAP Web-Interfaces zu umgehen.

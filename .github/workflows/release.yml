@@ -42,12 +42,15 @@ jobs:
             TAG_NAME="v${PKG_VERSION}.${GITHUB_RUN_NUMBER}"
           fi
           ZIP_NAME="somfy-freeathome-addon-${TAG_NAME}.zip"
+          CLEAN_ZIP="somfy-freeathome-addon.zip"
           echo "Setting execution permissions for SysAP container compliance..."
           chmod -R 755 dist free-at-home-metadata.json manifest.json package.json README.md
-          echo "Packaging ${ZIP_NAME} for release ${TAG_NAME}..."
+          echo "Packaging ${ZIP_NAME} and ${CLEAN_ZIP} for release ${TAG_NAME}..."
           zip -j "${ZIP_NAME}" free-at-home-metadata.json manifest.json package.json README.md
           zip -r "${ZIP_NAME}" dist
+          cp "${ZIP_NAME}" "${CLEAN_ZIP}"
           echo "PACKAGE_ZIP=${ZIP_NAME}" >> $GITHUB_ENV
+          echo "CLEAN_ZIP=${CLEAN_ZIP}" >> $GITHUB_ENV
           echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_OUTPUT
           echo "PKG_VERSION=${PKG_VERSION}" >> $GITHUB_OUTPUT
 
@@ -62,15 +65,16 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG_NAME: ${{ steps.get_version.outputs.TAG_NAME }}
           PACKAGE_ZIP: ${{ env.PACKAGE_ZIP }}
+          CLEAN_ZIP: ${{ env.CLEAN_ZIP }}
         run: |
-          echo "Publishing release for ${TAG_NAME} with ${PACKAGE_ZIP}..."
+          echo "Publishing release for ${TAG_NAME} with ${PACKAGE_ZIP} and ${CLEAN_ZIP}..."
           RELEASE_TITLE="Somfy Addon Release ${TAG_NAME}"
           RELEASE_BODY="Automatisches Release-Paket für Busch-Jaeger free@home System Access Point 2.0 / 3.0."
 
           if gh release view "${TAG_NAME}" > /dev/null 2>&1; then
-            echo "Release ${TAG_NAME} exists. Uploading zip asset..."
-            gh release upload "${TAG_NAME}" "${PACKAGE_ZIP}" --clobber
+            echo "Release ${TAG_NAME} exists. Uploading zip assets..."
+            gh release upload "${TAG_NAME}" "${PACKAGE_ZIP}" "${CLEAN_ZIP}" --clobber
           else
             echo "Creating new release ${TAG_NAME}..."
-            gh release create "${TAG_NAME}" "${PACKAGE_ZIP}" --title "${RELEASE_TITLE}" --notes "${RELEASE_BODY}"
+            gh release create "${TAG_NAME}" "${PACKAGE_ZIP}" "${CLEAN_ZIP}" --title "${RELEASE_TITLE}" --notes "${RELEASE_BODY}"
           fi
