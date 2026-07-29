@@ -1,5 +1,5 @@
 {
-  "id": "somfy-freeathome-addon",
+  "id": "de.somfy.freeathome",
   "name": "Somfy Connectivity Kit Integration",
   "version": "1.0.1",
   "description": "Integration für Somfy 1870755 Connectivity Kit (Rollläden, Fenster, Markisen)",

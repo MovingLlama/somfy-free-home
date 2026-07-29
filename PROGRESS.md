@@ -14,10 +14,12 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 2: Projekt-Setup & Minimalistisches Metadata-Schema (SysAP Validierung)
+### [x] Meilenstein 2: Log-Analyse & SysAP Reverse Domain ID Fix
 - **Erfolgreich umgesetzt**:
-  - Node.js & TypeScript Projekt-Konfiguration (`package.json`, `tsconfig.json`, `package-lock.json`).
-  - Bereinigung von `free-at-home-metadata.json` und `manifest.json` auf das exakte, minimalistische Schema des SysAP Addon-Parsers (`id`, `name`, `version`, `description`, `author`, `main`, `web`), um strikte JSON-Schema-Validierungsfehler beim SysAP Upload auszuschließen.
+  - Auswertung des bereitgestellten SysAP Diagnose-Logs (`freeathome-journal-2026-07-29T10.57.25.txt` & `scripting-journals`).
+  - Identifizierung des `mrha_scriptinghost` Systemd-Dienst-Namensschemas (`de.<vendor>.<appname>`).
+  - Umstellung der ID in `free-at-home-metadata.json` und `manifest.json` auf **`de.somfy.freeathome`** für Systemd-Kompatibilität.
+  - Hinzufügen von `freeathome-app-log*` zu `.gitignore`.
 
 ---
 
