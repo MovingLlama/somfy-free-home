@@ -14,10 +14,10 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 2: Projekt-Setup & Manifest-Erstellung (SysAP Validierung)
+### [x] Meilenstein 2: Projekt-Setup & Minimalistisches Metadata-Schema (SysAP Validierung)
 - **Erfolgreich umgesetzt**:
   - Node.js & TypeScript Projekt-Konfiguration (`package.json`, `tsconfig.json`, `package-lock.json`).
-  - Erstellung von `free-at-home-metadata.json` und `manifest.json` für Abwärtskompatibilität mit verschiedenen SysAP Firmware-Varianten.
+  - Bereinigung von `free-at-home-metadata.json` und `manifest.json` auf das exakte, minimalistische Schema des SysAP Addon-Parsers (`id`, `name`, `version`, `description`, `author`, `main`, `web`), um strikte JSON-Schema-Validierungsfehler beim SysAP Upload auszuschließen.
 
 ---
 
@@ -47,4 +47,4 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ### [x] Meilenstein 6: Clean Filename ZIP & Automated Releases
 - **Erfolgreich umgesetzt**:
-  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml) erstellt nun zusätzlich die Datei **`somfy-freeathome-addon.zip`** ohne Punkte im Dateinamen, um strikte Regex-Filter von älteren SysAP Web-Interfaces zu umgehen.
+  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml) erstellt nun zusätzlich die Datei **`somfy-freeathome-addon.zip`** ohne Punkte im Dateinamen.
