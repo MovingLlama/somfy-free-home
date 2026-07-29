@@ -49,6 +49,11 @@ npm run build
 
 # Addon ZIP Paket manuell erstellen
 npm run package
+
+# Release-Versionierung (Erhöhung von package.json & free-at-home-metadata.json)
+npm run release:patch   # z.B. 1.0.0 -> 1.0.1
+npm run release:minor   # z.B. 1.0.0 -> 1.1.0
+npm run release:major   # z.B. 1.0.0 -> 2.0.0
 ```
 
 ---

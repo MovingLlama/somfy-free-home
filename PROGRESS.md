@@ -44,8 +44,10 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 6: Hauptsteuerung & GitHub Actions Release Automation (Erfolgreicher TS Build)
+### [x] Meilenstein 6: Hauptsteuerung & GitHub Actions Release Automation (SemVer Versionierung)
 - **Erfolgreich umgesetzt**:
   - `src/index.ts`: Orchestrierung aller Komponenten, Laden/Speichern von Zugangsdaten, periodisches State-Polling (alle 30s) und Befehlsrouting.
-  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml): Auf Node 24 aktualisiert, Behebung der TS-Kompilierungsfehler und automatischer Build & Release bei allen Commits / Release-Tags.
+  - `scripts/bump-version.js`: Helper-Script zur synchronen Erhöhung der Version in `package.json` und `free-at-home-metadata.json`.
+  - `npm run release:patch`, `release:minor`, `release:major`: npm-Befehle zur einfachen SemVer-Releasesteuerung.
+  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml): Automatische SemVer-Auflösung und Bündelung von `somfy-freeathome-addon-vX.Y.Z.zip` für GitHub Releases.
   - `README.md`: Ausführliche Installations- und Bedienungsanleitung für das Busch-Jaeger free@home SysAP 2 System.
