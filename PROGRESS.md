@@ -14,33 +14,30 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 2: Exakte Quelltext-Analyse der Referenz piushartmann/ha-free-at-home-plugin
+### [x] Meilenstein 2: Nativer SysAP Upload Fix (.tar.gz & Validierungs-Schema)
 - **Erfolgreich umgesetzt**:
-  - Abrufen und Prüfen der echten `free-at-home-metadata.json` und `package.json` direkt aus dem Github-Repository `piushartmann/ha-free-at-home-plugin`.
-  - **Erkenntnis 1 (`type: "app"`)**: Das SysAP Manifest erfordert zwingend `"type": "app"`.
-  - **Erkenntnis 2 (`entryPoint: "dist/index.js"`)**: Der SysAP sucht nach dem Key `"entryPoint"` (nicht `"main"`).
-  - **Erkenntnis 3 (Lokalisierte Beschreibungs-Objekte)**: Der Key `"description"` MUSS ein Objekt mit Sprachschlüsseln (`{"de": "...", "en": "..."}`) sein. Reines String-Format führte beim Parsen des SysAP Web UIs zu einem Abbruch!
-  - **Erkenntnis 4 (ID & Lizenz & Beta Flags)**: Hinzufügen von `"beta": false`, `"license": "MIT"`, `"url"` und `"supportUrl"`.
+  - **Upload-Erfolg erreicht**: Korrektur von `free-at-home-metadata.json` (`"type": "app"`, `"entryPoint": "dist/index.js"`, lokalisierte `description`-Objekte, `id: "de.movingllama.somfy"`).
+  - Duales Verpacken in `.tar.gz` und `.zip` in [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml). Der SysAP entpackt das Addon nun nativ ohne Fehler!
 
 ---
 
-### [x] Meilenstein 3: Somfy Overkiz Client (API Integration)
+### [x] Meilenstein 3: Native SysAP Addon Konfiguration (Parameters UI)
 - **Erfolgreich umgesetzt**:
-  - `src/somfy/types.ts`: Typdefinitionen für Overkiz Geräte, Befehle und Zustände.
-  - `src/somfy/client.ts`: `SomfyOverkizClient` mit Somfy Cloud Authentifizierung (`/login` mit JSESSIONID Verwaltung), automatischem Re-Login bei Tokenablauf, Abfragen aller registrierten Somfy 1870755 Geräte sowie Ausführung von Steuerbefehlen (`open`, `close`, `stop`, `setClosure` / `setPosition` / `setDeployment`).
-  - `src/mapping/device-mapper.ts`: Zuordnungslogik zur automatischen Kategorisierung von Somfy Widgets in Rollläden (`shutter`), Markisen (`awning`) und Fenster (`window`) sowie Extraktion von Positions- & Öffnungszuständen.
+  - `free-at-home-metadata.json` um den Key `"parameters"` erweitert: Das SysAP rendert im Web-UI (*Einstellungen -> Addons -> Einstellungen*) nun native Eingabefelder für:
+    - **Somfy E-Mail / Benutzername** (`somfyUsername`)
+    - **Somfy Passwort** (`somfyPassword` mit Sternchen-Maskierung)
+    - **Abfrage-Intervall** in Sekunden (`pollingInterval`)
+  - [src/freeathome/manager.ts](file:///home/stefan-seyerl/repos/somfy@free@home/src/freeathome/manager.ts) reagiert live auf Parameteränderungen im SysAP-UI (`configurationChanged` / `parameterChanged` Events).
 
 ---
 
-### [x] Meilenstein 4: free@home SysAP Virtual Device Manager (Dynamic Method Resolution)
+### [x] Meilenstein 4: Robustes Overkiz Login & Multi-Endpoint Fallback
 - **Erfolgreich umgesetzt**:
-  - `src/freeathome/types.ts`: Typdefinitionen für free@home Datenpunkte.
-  - `src/freeathome/manager.ts`: `FreeAtHomeManager` zur nativen Einbindung über `@busch-jaeger/free-at-home` / SysAP API mit dynamischem Method-Matching für `createBlindActuatorDevice` / `createBlindDevice` und `createWindowSensorDevice`.
-  - Registrierung virtueller Aktoren (`BlindActuator` für Rollläden & Markisen, `WindowSensor` für Fenster).
-  - Bi-direktionale Datenpunkt-Synchronisation: Weiterleitung von Taster- & App-Befehlen aus free@home an das Connectivity Kit sowie Aktualisierung der Datenpunkte (`odp0000`) im free@home SysAP bei Somfy Statusänderungen.
+  - [src/somfy/client.ts](file:///home/stefan-seyerl/repos/somfy@free@home/src/somfy/client.ts): Automatische Anmeldung über primäre und sekundäre Overkiz Endpunkte (`ha101-1.overkiz.com`, `ha201-1.overkiz.com`).
+  - Automatischer Re-Login bei Cookie/Session-Ablauf (401/403 HTTP Fehler) während Hintergrundabfragen oder Befehlsausführungen.
 
 ---
 
-### [x] Meilenstein 5: Web UI Konfigurations-Interface & Standalone API Modus
+### [x] Meilenstein 5: Strukturiertes Logging-System (Sensitive Data Masking)
 - **Erfolgreich umgesetzt**:
-  - `src/web/server.ts`: Express-basierte Admin-Oberfläche auf Port 8080 zur bequemen Eingabe der Somfy Account-Zugangsdaten (E-Mail/Passwort), Verbindungsprüfung und tabellarischen Übersicht aller gekoppelten Somfy Rollläden, Fenster und Markisen.
+  - [src/utils/logger.ts](file:///home/stefan-seyerl/repos/somfy@free@home/src/utils/logger.ts): Logger mit Zeitstempeln (`ISO 8601`), Log-Leveln (`DEBUG`, `INFO`, `SUCCESS`, `WARN`, `ERROR`) und automatischer Maskierung von sensiblen Daten (Passwörter, Tokens, JSESSIONID).

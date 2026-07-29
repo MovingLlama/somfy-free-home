@@ -1,35 +1,72 @@
 import { FreeAtHome } from '@busch-jaeger/free-at-home';
 import { VirtualDeviceConfig, CommandCallback, CommandEvent } from './types';
+import { logger } from '../utils/logger';
+
+export type ConfigurationCallback = (config: Record<string, any>) => void;
 
 export class FreeAtHomeManager {
   private fah: FreeAtHome | null = null;
   private virtualDevices: Map<string, any> = new Map();
   private commandCallbacks: CommandCallback[] = [];
+  private configCallbacks: ConfigurationCallback[] = [];
   private isConnected: boolean = false;
 
   constructor() {
     try {
       this.fah = new FreeAtHome();
       this.fah.activateSignalHandling();
+      this.setupListeners();
     } catch (err) {
-      console.warn('Could not instantiate @busch-jaeger/free-at-home directly:', err);
+      logger.warn('Could not instantiate @busch-jaeger/free-at-home directly (running in fallback/standalone mode):', err);
+    }
+  }
+
+  private setupListeners(): void {
+    if (!this.fah) return;
+
+    const fahAny = this.fah as any;
+    
+    // Listen for SysAP native configuration parameter updates
+    if (typeof fahAny.on === 'function') {
+      fahAny.on('configurationChanged', (newConfig: any) => {
+        logger.info('Received configuration update from free@home SysAP UI:', newConfig);
+        this.emitConfigurationChange(newConfig);
+      });
+
+      fahAny.on('parameterChanged', (parameterName: string, value: any) => {
+        logger.info(`SysAP parameter changed: ${parameterName} =`, value);
+        this.emitConfigurationChange({ [parameterName]: value });
+      });
+    }
+  }
+
+  public onConfigurationChange(callback: ConfigurationCallback): void {
+    this.configCallbacks.push(callback);
+  }
+
+  private emitConfigurationChange(config: Record<string, any>): void {
+    for (const cb of this.configCallbacks) {
+      try {
+        cb(config);
+      } catch (err) {
+        logger.error('Error in configuration callback:', err);
+      }
     }
   }
 
   public async connect(): Promise<boolean> {
     if (!this.fah) {
-      console.warn('Running FreeAtHomeManager in virtual fallback mode (SysAP standalone REST).');
+      logger.info('FreeAtHomeManager running in standalone mode.');
       this.isConnected = true;
       return true;
     }
 
     try {
-      // FreeAtHome library auto-connects to local SysAP container environment
       this.isConnected = true;
-      console.log('Successfully connected to free@home SysAP local interface.');
+      logger.success('Connected to free@home SysAP local interface.');
       return true;
     } catch (error) {
-      console.error('Failed to connect to free@home SysAP:', error);
+      logger.error('Failed to connect to free@home SysAP interface:', error);
       this.isConnected = false;
       return false;
     }
@@ -63,6 +100,7 @@ export class FreeAtHomeManager {
 
             if (typeof device.on === 'function') {
               device.on('onMoveUpDown', (value: any) => {
+                logger.info(`SysAP command onMoveUpDown received for ${config.displayName} (${config.nativeId}):`, value);
                 this.emitCommand({
                   nativeId: config.nativeId,
                   channel: 'ch0000',
@@ -72,6 +110,7 @@ export class FreeAtHomeManager {
               });
 
               device.on('onStopMove', () => {
+                logger.info(`SysAP command onStopMove received for ${config.displayName} (${config.nativeId})`);
                 this.emitCommand({
                   nativeId: config.nativeId,
                   channel: 'ch0000',
@@ -81,6 +120,7 @@ export class FreeAtHomeManager {
               });
 
               device.on('onPositionChanged', (value: any) => {
+                logger.info(`SysAP command onPositionChanged received for ${config.displayName} (${config.nativeId}):`, value);
                 this.emitCommand({
                   nativeId: config.nativeId,
                   channel: 'ch0000',
@@ -108,14 +148,13 @@ export class FreeAtHomeManager {
           }
         }
       } else {
-        // Fallback registration log
         this.virtualDevices.set(config.nativeId, { nativeId: config.nativeId, config });
       }
 
-      console.log(`Registered free@home virtual device: ${config.displayName} (${config.nativeId})`);
+      logger.success(`Registered free@home virtual device: ${config.displayName} (${config.nativeId})`);
       return true;
     } catch (error) {
-      console.error(`Failed to register free@home virtual device ${config.nativeId}:`, error);
+      logger.error(`Failed to register free@home virtual device ${config.nativeId}:`, error);
       return false;
     }
   }
@@ -126,11 +165,11 @@ export class FreeAtHomeManager {
 
     try {
       if (typeof device.setDatapoint === 'function') {
-        // Set odp0000 (Position 0-100%)
         device.setDatapoint('ch0000', 'odp0000', String(position));
+        logger.debug(`Updated datapoint odp0000 for ${nativeId} to ${position}%`);
       }
     } catch (err) {
-      console.error(`Failed to update position for ${nativeId}:`, err);
+      logger.error(`Failed to update position for ${nativeId}:`, err);
     }
   }
 
@@ -145,9 +184,10 @@ export class FreeAtHomeManager {
     try {
       if (typeof device.setDatapoint === 'function') {
         device.setDatapoint('ch0000', 'odp0000', val);
+        logger.debug(`Updated window datapoint odp0000 for ${nativeId} to ${val}`);
       }
     } catch (err) {
-      console.error(`Failed to update window state for ${nativeId}:`, err);
+      logger.error(`Failed to update window state for ${nativeId}:`, err);
     }
   }
 
@@ -156,7 +196,7 @@ export class FreeAtHomeManager {
       try {
         cb(event);
       } catch (err) {
-        console.error('Error in command callback:', err);
+        logger.error('Error in command callback:', err);
       }
     }
   }

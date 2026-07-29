@@ -6,6 +6,7 @@ import { FreeAtHomeManager } from './freeathome/manager';
 import { DeviceMapper } from './mapping/device-mapper';
 import { WebServer } from './web/server';
 import { OverkizCredentials, MappedDevice } from './somfy/types';
+import { logger } from './utils/logger';
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ class AddonApp {
   private credentials: OverkizCredentials = { username: '', password: '' };
   private mappedDevices: Map<string, MappedDevice> = new Map();
   private pollIntervalMs: number = 30000;
+  private pollTimer: NodeJS.Timeout | null = null;
   private isConnected: boolean = false;
 
   constructor() {
@@ -29,11 +31,18 @@ class AddonApp {
       onForceSync: async () => this.syncDevices(),
       getStatus: () => this.getStatus()
     });
+
+    // Listen for SysAP Addon Settings UI parameter changes
+    this.fahManager.onConfigurationChange(async (config) => {
+      await this.handleSysapConfigurationChange(config);
+    });
   }
 
   public async start(): Promise<void> {
-    console.log('Starting Somfy 1870755 free@home SysAP 2 Addon...');
-    
+    logger.info('====================================================');
+    logger.info('Starting Somfy 1870755 free@home SysAP Addon v1.0.1');
+    logger.info('====================================================');
+
     // Start Web Server
     this.webServer.start();
 
@@ -48,10 +57,20 @@ class AddonApp {
     // If credentials exist, initialize Somfy client and sync
     if (this.credentials.username && this.credentials.password) {
       await this.initSomfyClient();
+    } else {
+      logger.warn('No Somfy credentials provided yet. Configure credentials in SysAP Addon Settings or via Web UI on port 8080.');
     }
 
     // Start continuous polling loop
-    setInterval(() => this.pollSomfyStates(), this.pollIntervalMs);
+    this.startPollingTimer();
+  }
+
+  private startPollingTimer(): void {
+    if (this.pollTimer) {
+      clearInterval(this.pollTimer);
+    }
+    this.pollTimer = setInterval(() => this.pollSomfyStates(), this.pollIntervalMs);
+    logger.info(`Polling loop active with interval: ${this.pollIntervalMs / 1000}s`);
   }
 
   private loadConfig(): void {
@@ -61,27 +80,58 @@ class AddonApp {
         const data = JSON.parse(raw);
         if (data.username && data.password) {
           this.credentials = data;
+          logger.info(`Loaded stored credentials for user: ${data.username}`);
         }
       } else if (process.env.SOMFY_USERNAME && process.env.SOMFY_PASSWORD) {
         this.credentials = {
           username: process.env.SOMFY_USERNAME,
           password: process.env.SOMFY_PASSWORD
         };
+        logger.info(`Loaded environment credentials for user: ${this.credentials.username}`);
       }
     } catch (err) {
-      console.error('Error loading config:', err);
+      logger.error('Error loading config file:', err);
     }
   }
 
   private saveConfig(): void {
     try {
       fs.writeFileSync(CONFIG_FILE, JSON.stringify(this.credentials, null, 2), 'utf-8');
+      logger.info('Saved configuration to local file config.json');
     } catch (err) {
-      console.error('Error saving config:', err);
+      logger.error('Error saving config file:', err);
+    }
+  }
+
+  private async handleSysapConfigurationChange(config: Record<string, any>): Promise<void> {
+    logger.info('Processing SysAP Addon Configuration change...');
+    let updated = false;
+
+    if (config.somfyUsername && config.somfyUsername !== this.credentials.username) {
+      this.credentials.username = String(config.somfyUsername);
+      updated = true;
+    }
+
+    if (config.somfyPassword && config.somfyPassword !== this.credentials.password) {
+      this.credentials.password = String(config.somfyPassword);
+      updated = true;
+    }
+
+    if (config.pollingInterval && !isNaN(Number(config.pollingInterval))) {
+      const intervalSec = Math.max(10, Number(config.pollingInterval));
+      this.pollIntervalMs = intervalSec * 1000;
+      this.startPollingTimer();
+      logger.info(`Updated polling interval to ${intervalSec} seconds`);
+    }
+
+    if (updated) {
+      this.saveConfig();
+      await this.initSomfyClient();
     }
   }
 
   private async handleSaveCredentials(creds: OverkizCredentials): Promise<boolean> {
+    logger.info('Saving credentials from Web UI...');
     this.credentials = creds;
     this.saveConfig();
     return await this.initSomfyClient();
@@ -89,37 +139,42 @@ class AddonApp {
 
   private async initSomfyClient(): Promise<boolean> {
     if (!this.credentials.username || !this.credentials.password) {
+      logger.warn('Skipping Somfy client init: credentials missing.');
       return false;
     }
 
+    logger.info(`Initializing Somfy Overkiz Client for ${this.credentials.username}...`);
     this.somfyClient = new SomfyOverkizClient(this.credentials);
     const loginOk = await this.somfyClient.login();
     this.isConnected = loginOk;
 
     if (loginOk) {
-      console.log('Somfy Connectivity Kit login successful.');
+      logger.success(`Successfully authenticated with Somfy Overkiz API for ${this.credentials.username}`);
       await this.syncDevices();
     } else {
-      console.error('Somfy Connectivity Kit login failed.');
+      logger.error(`Failed to authenticate with Somfy Overkiz API for ${this.credentials.username}`);
     }
     return loginOk;
   }
 
   private async syncDevices(): Promise<void> {
-    if (!this.somfyClient || !this.isConnected) return;
+    if (!this.somfyClient || !this.isConnected) {
+      logger.warn('Cannot sync devices: Somfy client not connected.');
+      return;
+    }
 
     try {
+      logger.info('Syncing device setup from Somfy Cloud...');
       const rawDevices = await this.somfyClient.getDevices();
-      console.log(`Discovered ${rawDevices.length} raw devices from Somfy Connectivity Kit.`);
+      logger.info(`Discovered ${rawDevices.length} total raw devices from Somfy Connectivity Kit.`);
 
       for (const dev of rawDevices) {
         const category = DeviceMapper.categorizeDevice(dev);
-        if (category === 'unknown') continue; // Skip unsupported widgets
+        if (category === 'unknown') continue;
 
         const mapped = DeviceMapper.parseDeviceState(dev);
         this.mappedDevices.set(mapped.deviceURL, mapped);
 
-        // Sanitize deviceURL to create a valid free@home nativeId
         const nativeId = 'somfy_' + mapped.deviceURL.replace(/[^a-zA-Z0-9]/g, '_');
 
         if (category === 'shutter' || category === 'awning') {
@@ -142,8 +197,9 @@ class AddonApp {
           }
         }
       }
+      logger.success(`Device sync completed. Registered ${this.mappedDevices.size} Somfy widgets.`);
     } catch (err) {
-      console.error('Error during device sync:', err);
+      logger.error('Error during Somfy device sync:', err);
     }
   }
 
@@ -151,6 +207,7 @@ class AddonApp {
     if (!this.somfyClient || !this.isConnected) return;
 
     try {
+      logger.debug('Polling Somfy state updates...');
       const rawDevices = await this.somfyClient.getDevices();
       for (const dev of rawDevices) {
         if (!this.mappedDevices.has(dev.deviceURL)) continue;
@@ -170,14 +227,16 @@ class AddonApp {
         }
       }
     } catch (err) {
-      console.error('Error polling Somfy states:', err);
+      logger.error('Error polling Somfy states:', err);
     }
   }
 
   private async handleFreeAtHomeCommand(event: { nativeId: string; channel: string; datapoint: string; value: string }): Promise<void> {
-    if (!this.somfyClient) return;
+    if (!this.somfyClient) {
+      logger.warn('Cannot handle command: Somfy client is not initialized.');
+      return;
+    }
 
-    // Find mapped device by nativeId
     let targetDevice: MappedDevice | undefined = undefined;
     for (const dev of this.mappedDevices.values()) {
       const nId = 'somfy_' + dev.deviceURL.replace(/[^a-zA-Z0-9]/g, '_');
@@ -188,32 +247,29 @@ class AddonApp {
     }
 
     if (!targetDevice) {
-      console.warn(`Received command for unknown nativeId: ${event.nativeId}`);
+      logger.warn(`Received command for unknown nativeId: ${event.nativeId}`);
       return;
     }
 
-    console.log(`Executing free@home command on Somfy device ${targetDevice.label}: ${event.datapoint} = ${event.value}`);
+    logger.info(`Received free@home command for Somfy device '${targetDevice.label}': ${event.datapoint} = ${event.value}`);
 
     try {
       if (event.datapoint === 'idp0000') {
-        // Move Up / Down (0 = Move Up / Open, 1 = Move Down / Close)
         if (event.value === '0') {
           await this.somfyClient.openDevice(targetDevice.deviceURL, targetDevice.category);
         } else {
           await this.somfyClient.closeDevice(targetDevice.deviceURL, targetDevice.category);
         }
       } else if (event.datapoint === 'idp0001') {
-        // Stop command
         await this.somfyClient.stopDevice(targetDevice.deviceURL);
       } else if (event.datapoint === 'idp0002') {
-        // Set Position (0-100%)
         const closure = parseInt(event.value, 10);
         if (!isNaN(closure)) {
           await this.somfyClient.setDevicePosition(targetDevice.deviceURL, closure);
         }
       }
     } catch (err) {
-      console.error(`Failed to execute command on Somfy device ${targetDevice.label}:`, err);
+      logger.error(`Failed to execute command on Somfy device ${targetDevice.label}:`, err);
     }
   }
 
@@ -230,5 +286,5 @@ class AddonApp {
 
 const app = new AddonApp();
 app.start().catch((err) => {
-  console.error('Fatal error starting Somfy Addon:', err);
+  logger.error('Fatal error starting Somfy Addon:', err);
 });

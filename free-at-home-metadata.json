@@ -12,5 +12,45 @@
   "author": "Stefan Seyerl",
   "type": "app",
   "entryPoint": "dist/index.js",
-  "beta": false
+  "beta": false,
+  "parameters": {
+    "authentication": {
+      "name": "Somfy Account Credentials",
+      "name@de": "Somfy Zugangsdaten",
+      "items": {
+        "authDescription": {
+          "name": "Description",
+          "name@de": "Beschreibung",
+          "type": "description",
+          "description": "Please provide your Somfy Connectivity Kit (Overkiz) account email and password to connect your devices with free@home.",
+          "description@de": "Bitte gib deine Somfy Connectivity Kit E-Mail-Adresse und dein Passwort ein, um deine Somfy Geräte mit free@home zu koppeln."
+        },
+        "somfyUsername": {
+          "name": "Somfy Account Email",
+          "name@de": "Somfy Account E-Mail",
+          "type": "string",
+          "description": "Email address of your Somfy account",
+          "description@de": "E-Mail-Adresse deines Somfy Accounts"
+        },
+        "somfyPassword": {
+          "name": "Somfy Account Password",
+          "name@de": "Somfy Account Passwort",
+          "type": "password",
+          "description": "Password of your Somfy account",
+          "description@de": "Passwort deines Somfy Accounts"
+        },
+        "pollingInterval": {
+          "name": "Polling Interval (Seconds)",
+          "name@de": "Abfrage-Intervall (Sekunden)",
+          "type": "number",
+          "default": 30,
+          "description": "Frequency in seconds to poll Somfy device states (default: 30)",
+          "description@de": "Intervall in Sekunden zur Statusabfrage der Somfy Geräte (Standard: 30)"
+        }
+      }
+    }
+  },
+  "web": {
+    "port": 8080
+  }
 }
