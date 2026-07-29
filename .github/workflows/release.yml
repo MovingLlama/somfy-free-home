@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -57,8 +59,10 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.get_version.outputs.TAG_NAME }}
+          target_commitish: ${{ github.sha }}
           name: Somfy Addon Release ${{ steps.get_version.outputs.TAG_NAME }}
           files: ${{ env.PACKAGE_ZIP }}
+          make_latest: 'true'
           body: |
             ## Somfy Connectivity Kit (1870755) free@home SysAP 2 Addon (${{ steps.get_version.outputs.TAG_NAME }})
             Automatisches Release-Paket für Busch-Jaeger free@home System Access Point 2.0 / 3.0.
