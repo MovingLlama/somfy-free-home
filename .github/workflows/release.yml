@@ -62,21 +62,13 @@ jobs:
           PACKAGE_ZIP: ${{ env.PACKAGE_ZIP }}
         run: |
           echo "Publishing release for ${TAG_NAME} with ${PACKAGE_ZIP}..."
+          RELEASE_TITLE="Somfy Addon Release ${TAG_NAME}"
+          RELEASE_BODY="Automatisches Release-Paket für Busch-Jaeger free@home System Access Point 2.0 / 3.0."
+
           if gh release view "${TAG_NAME}" > /dev/null 2>&1; then
             echo "Release ${TAG_NAME} exists. Uploading zip asset..."
             gh release upload "${TAG_NAME}" "${PACKAGE_ZIP}" --clobber
           else
             echo "Creating new release ${TAG_NAME}..."
-            gh release create "${TAG_NAME}" "${PACKAGE_ZIP}" \
-              --title "Somfy Addon Release ${TAG_NAME}" \
-              --notes "## Somfy Connectivity Kit (1870755) free@home SysAP 2 Addon (${TAG_NAME})
-
-Automatisches Release-Paket für Busch-Jaeger free@home System Access Point 2.0 / 3.0.
-
-### Enthaltene Funktionen:
-- Anbindung von Somfy Rollläden, Fenstern und Markisen via Connectivity Kit 1870755.
-- Automatische Registrierung virtueller Aktoren im free@home System Access Point.
-- Integrierte Web-Konfigurations-Oberfläche.
-- Semantische Release-Versionierung."
+            gh release create "${TAG_NAME}" "${PACKAGE_ZIP}" --title "${RELEASE_TITLE}" --notes "${RELEASE_BODY}"
           fi
-
