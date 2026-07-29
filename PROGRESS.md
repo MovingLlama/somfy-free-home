@@ -1,6 +1,6 @@
 # Fortschrittsdokumentation (PROGRESS.md)
 
-Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfolge beim Erstellen des **free@home SysAP 2 Addons für Somfy 1870755 (Connectivity Kit)**. bei etwaigen Unterbrechungen kann die Arbeit hier anknüpfend fortgesetzt werden.
+Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfolge beim Erstellen des **free@home SysAP 2 Addons für Somfy 1870755 (Connectivity Kit)**. Bei etwaigen Unterbrechungen kann die Arbeit hier anknüpfend fortgesetzt werden.
 
 ---
 
@@ -44,8 +44,8 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 6: Hauptsteuerung & GitHub Actions Release Packaging (.zip)
+### [x] Meilenstein 6: Hauptsteuerung & GitHub Actions Release Automation (Auto-Update)
 - **Erfolgreich umgesetzt**:
-  - `src/index.ts`: Orchestrierung aller Komponenten, Laden/Speichern von Zugangsdaten, periodisches State-Polling (alle 30s) und Befehlsrouting.
-  - `.github/workflows/release.yml`: GitHub Actions Workflow zur automatischen Kompilierung und Bündelung des Addons in installierbare `.zip`-Dateien bei Veröffentlichung von Release-Tags (z.B. `v1.0.0`).
+  - `src/index.ts`: Orchestrierung aller Komponenten, Laden/Speichern von Zugangsdaten, periodisches State-Polling (alle 30s) und Befehling.
+  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml): Erweitert für **automatischen Build & Release bei jedem Push/Update auf den Branch `main` oder `master`** sowie bei Tags (`v*`). Bei jedem Update wird das Release-ZIP automatisch neu gebaut und im GitHub Release aktualisiert.
   - `README.md`: Ausführliche Installations- und Bedienungsanleitung für das Busch-Jaeger free@home SysAP 2 System.
