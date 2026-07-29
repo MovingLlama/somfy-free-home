@@ -48,11 +48,10 @@ jobs:
           echo "Setting execution permissions for SysAP container compliance..."
           chmod -R 755 dist free-at-home-metadata.json package.json README.md
           echo "Packaging ZIP and TAR.GZ for release ${TAG_NAME}..."
-          zip -j "${ZIP_NAME}" free-at-home-metadata.json package.json README.md dist/index.js
+          zip -r "${ZIP_NAME}" free-at-home-metadata.json package.json README.md dist
           cp "${ZIP_NAME}" "${CLEAN_ZIP}"
-          
-          # Create tar.gz archive (flat root)
-          tar -czf "${TAR_NAME}" -C dist index.js -C .. free-at-home-metadata.json package.json README.md
+
+          tar -czf "${TAR_NAME}" free-at-home-metadata.json package.json README.md dist
           cp "${TAR_NAME}" "${CLEAN_TAR}"
 
           echo "PACKAGE_ZIP=${ZIP_NAME}" >> $GITHUB_ENV

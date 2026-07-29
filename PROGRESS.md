@@ -14,10 +14,13 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 2: Log-Analyse & SysAP Packaging (.tar.gz & .zip Dual Release)
+### [x] Meilenstein 2: Exakte Quelltext-Analyse der Referenz piushartmann/ha-free-at-home-plugin
 - **Erfolgreich umgesetzt**:
-  - **Erkenntnis (`.tar.gz` Archiv-Format)**: Da der Busch-Jaeger System Access Point auf einem Yocto Linux-Betriebssystem läuft, erwartet der interne Dienst `mrha_scriptinghost` nativerweise **`tar.gz` Archiv-Dateien (`tar -xzf`)**.
-  - Anpassung der GitHub Release Pipeline ([.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml)): Das Release generiert ab sofort automatisch sowohl **`.tar.gz`** als auch **`.zip`** Archive (`somfy-freeathome-addon.tar.gz` & `somfy-freeathome-addon.zip`).
+  - Abrufen und Prüfen der echten `free-at-home-metadata.json` und `package.json` direkt aus dem Github-Repository `piushartmann/ha-free-at-home-plugin`.
+  - **Erkenntnis 1 (`type: "app"`)**: Das SysAP Manifest erfordert zwingend `"type": "app"`.
+  - **Erkenntnis 2 (`entryPoint: "dist/index.js"`)**: Der SysAP sucht nach dem Key `"entryPoint"` (nicht `"main"`).
+  - **Erkenntnis 3 (Lokalisierte Beschreibungs-Objekte)**: Der Key `"description"` MUSS ein Objekt mit Sprachschlüsseln (`{"de": "...", "en": "..."}`) sein. Reines String-Format führte beim Parsen des SysAP Web UIs zu einem Abbruch!
+  - **Erkenntnis 4 (ID & Lizenz & Beta Flags)**: Hinzufügen von `"beta": false`, `"license": "MIT"`, `"url"` und `"supportUrl"`.
 
 ---
 
