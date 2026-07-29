@@ -16,7 +16,7 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ### [x] Meilenstein 2: Projekt-Setup & Manifest-Erstellung
 - **Erfolgreich umgesetzt**:
-  - Node.js & TypeScript Projekt-Konfiguration (`package.json`, `tsconfig.json`).
+  - Node.js & TypeScript Projekt-Konfiguration (`package.json`, `tsconfig.json`, `package-lock.json`).
   - Erstellung der SysAP Addon-Manifestdatei `free-at-home-metadata.json` mit ID `somfy-connectivity-kit-addon`, Admin-Web-UI Konfiguration (Port 8080) und Deklaration der virtuellen Gerätetypen (`BlindActuator`, `WindowSensor`).
 
 ---
@@ -44,8 +44,8 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 6: Hauptsteuerung & GitHub Actions Release Automation (Auto-Update)
+### [x] Meilenstein 6: Hauptsteuerung & GitHub Actions Release Automation (Node 24 / Lockfile Fix)
 - **Erfolgreich umgesetzt**:
   - `src/index.ts`: Orchestrierung aller Komponenten, Laden/Speichern von Zugangsdaten, periodisches State-Polling (alle 30s) und Befehling.
-  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml): Erweitert für **automatischen Build & Release bei jedem Push/Update auf den Branch `main` oder `master`** sowie bei Tags (`v*`). Bei jedem Update wird das Release-ZIP automatisch neu gebaut und im GitHub Release aktualisiert.
+  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml): Aktualisiert auf **Node 24** (Behebung des Node 20 Deprecation Warnings) und Umstellung auf `npm install` mit beiliegender `package-lock.json` zur fehlerfreien Ausführung auf GitHub Actions Runnern.
   - `README.md`: Ausführliche Installations- und Bedienungsanleitung für das Busch-Jaeger free@home SysAP 2 System.
