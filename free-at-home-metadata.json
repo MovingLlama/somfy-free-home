@@ -4,7 +4,7 @@
   "version": "1.0.1",
   "description": "Integration für Somfy 1870755 Connectivity Kit (Rollläden, Fenster, Markisen)",
   "author": "Stefan Seyerl",
-  "main": "dist/index.js",
+  "main": "index.js",
   "web": {
     "port": 8080
   }

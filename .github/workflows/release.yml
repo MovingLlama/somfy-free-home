@@ -46,8 +46,7 @@ jobs:
           echo "Setting execution permissions for SysAP container compliance..."
           chmod -R 755 dist free-at-home-metadata.json manifest.json package.json README.md
           echo "Packaging ${ZIP_NAME} and ${CLEAN_ZIP} for release ${TAG_NAME}..."
-          zip -j "${ZIP_NAME}" free-at-home-metadata.json manifest.json package.json README.md
-          zip -r "${ZIP_NAME}" dist
+          zip -j "${ZIP_NAME}" free-at-home-metadata.json manifest.json package.json README.md dist/index.js
           cp "${ZIP_NAME}" "${CLEAN_ZIP}"
           echo "PACKAGE_ZIP=${ZIP_NAME}" >> $GITHUB_ENV
           echo "CLEAN_ZIP=${CLEAN_ZIP}" >> $GITHUB_ENV
