@@ -4,10 +4,10 @@
   "description": "Busch-Jaeger free@home SysAP 2 Addon for Somfy 1870755 Connectivity Kit (Rollläden, Fenster, Markisen)",
   "main": "index.js",
   "scripts": {
-    "build": "tsc && ncc build src/index.ts -o dist --minify",
+    "build": "tsc && ncc build src/index.ts -o dist --target es2018 --minify",
     "start": "node index.js",
     "dev": "ts-node src/index.ts",
-    "package": "npm run build && zip -j somfy-freeathome-addon.zip free-at-home-metadata.json manifest.json package.json README.md dist/index.js",
+    "package": "npm run build && zip -j somfy-freeathome-addon.zip free-at-home-metadata.json package.json README.md dist/index.js",
     "release:patch": "node scripts/bump-version.js patch",
     "release:minor": "node scripts/bump-version.js minor",
     "release:major": "node scripts/bump-version.js major"

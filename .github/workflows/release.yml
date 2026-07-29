@@ -30,7 +30,7 @@ jobs:
         run: npm install
 
       - name: Compile & Bundle Addon
-        run: npx @vercel/ncc build src/index.ts -o dist --minify
+        run: npx @vercel/ncc build src/index.ts -o dist --target es2018 --minify
 
       - name: Extract Version & Prepare Packaging
         id: get_version
@@ -44,9 +44,9 @@ jobs:
           ZIP_NAME="somfy-freeathome-addon-${TAG_NAME}.zip"
           CLEAN_ZIP="somfy-freeathome-addon.zip"
           echo "Setting execution permissions for SysAP container compliance..."
-          chmod -R 755 dist free-at-home-metadata.json manifest.json package.json README.md
+          chmod -R 755 dist free-at-home-metadata.json package.json README.md
           echo "Packaging ${ZIP_NAME} and ${CLEAN_ZIP} for release ${TAG_NAME}..."
-          zip -j "${ZIP_NAME}" free-at-home-metadata.json manifest.json package.json README.md dist/index.js
+          zip -j "${ZIP_NAME}" free-at-home-metadata.json package.json README.md dist/index.js
           cp "${ZIP_NAME}" "${CLEAN_ZIP}"
           echo "PACKAGE_ZIP=${ZIP_NAME}" >> $GITHUB_ENV
           echo "CLEAN_ZIP=${CLEAN_ZIP}" >> $GITHUB_ENV

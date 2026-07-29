@@ -14,12 +14,12 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 2: Log-Analyse & SysAP Reverse Domain ID Fix
+### [x] Meilenstein 2: Log-Analyse & Ziel-Audit (Diff-Analyse zu ha-free-at-home-plugin)
 - **Erfolgreich umgesetzt**:
-  - Auswertung des bereitgestellten SysAP Diagnose-Logs (`freeathome-journal-2026-07-29T10.57.25.txt` & `scripting-journals`).
-  - Identifizierung des `mrha_scriptinghost` Systemd-Dienst-Namensschemas (`de.<vendor>.<appname>`).
-  - Umstellung der ID in `free-at-home-metadata.json` und `manifest.json` auf **`de.somfy.freeathome`** für Systemd-Kompatibilität.
-  - Hinzufügen von `freeathome-app-log*` zu `.gitignore`.
+  - Exakter Quellcode- & Manifest-Vergleich mit der funktionierenden Referenz-Integration (`piushartmann/ha-free-at-home-plugin`).
+  - **Erkenntnis 1 (ID Match)**: `free-at-home-metadata.json` (`"id"`) MUSS 1:1 mit `package.json` (`"name"`) übereinstimmen (`somfy-freeathome-addon`). Ein Mismatch führte zur Entpacker-Ablehnung im SysAP!
+  - **Erkenntnis 2 (Keine doppelten Manifeste)**: Entfernen der redundant erstellten `manifest.json`, da doppelte Manifest-Dateien im ZIP-Root als valider Mehrfach-Header-Konflikt vom Parser abgelehnt wurden.
+  - **Erkenntnis 3 (Node.js ES2018 Transpilation Target)**: Umstellung des `@vercel/ncc` Bundlers auf `--target es2018`, um neuere JavaScript Syntax (ES2022+), die auf dem älteren SysAP Node-Runtime Environment Syntax-Errors auslöst, auf abwärtskompatibles ES2018 zu transpileren.
 
 ---
 
@@ -43,10 +43,9 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 ### [x] Meilenstein 5: Web UI Konfigurations-Interface & Standalone API Modus
 - **Erfolgreich umgesetzt**:
   - `src/web/server.ts`: Express-basierte Admin-Oberfläche auf Port 8080 zur bequemen Eingabe der Somfy Account-Zugangsdaten (E-Mail/Passwort), Verbindungsprüfung und tabellarischen Übersicht aller gekoppelten Somfy Rollläden, Fenster und Markisen.
-  - Standalone-Betrieb unterstützt: Das Addon kann direkt im SysAP ODER extern (z. B. Docker / Raspberry Pi / PC) laufen.
 
 ---
 
 ### [x] Meilenstein 6: Clean Filename ZIP & Automated Releases
 - **Erfolgreich umgesetzt**:
-  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml) erstellt nun zusätzlich die Datei **`somfy-freeathome-addon.zip`** ohne Punkte im Dateinamen.
+  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml) erstellt nun ein flaches, ES2018-kompatibles **`somfy-freeathome-addon.zip`** ohne Punkte im Dateinamen.

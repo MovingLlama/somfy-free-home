@@ -3,7 +3,6 @@ const path = require('path');
 
 const packagePath = path.join(__dirname, '../package.json');
 const metaPath = path.join(__dirname, '../free-at-home-metadata.json');
-const manifestPath = path.join(__dirname, '../manifest.json');
 
 const bumpType = process.argv[2] || 'patch';
 
@@ -34,10 +33,4 @@ if (fs.existsSync(metaPath)) {
   fs.writeFileSync(metaPath, JSON.stringify(meta, null, 2) + '\n');
 }
 
-if (fs.existsSync(manifestPath)) {
-  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-  manifest.version = newVersion;
-  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
-}
-
-console.log(`Version bumped to ${newVersion} in package.json, free-at-home-metadata.json, and manifest.json`);
+console.log(`Version bumped to ${newVersion} in package.json and free-at-home-metadata.json`);
