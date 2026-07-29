@@ -25,7 +25,7 @@
     "fenster",
     "markise"
   ],
-  "author": "Stefan Seyerl",
+  "author": "MovingLlama",
   "license": "MIT",
   "dependencies": {
     "@busch-jaeger/free-at-home": "^0.36.0",

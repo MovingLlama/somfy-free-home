@@ -38,6 +38,7 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 5: Strukturiertes Logging-System (Sensitive Data Masking)
+### [x] Meilenstein 5: Autor (MovingLlama) & Dynamische Release-Versionssynchronisation
 - **Erfolgreich umgesetzt**:
-  - [src/utils/logger.ts](file:///home/stefan-seyerl/repos/somfy@free@home/src/utils/logger.ts): Logger mit Zeitstempeln (`ISO 8601`), Log-Leveln (`DEBUG`, `INFO`, `SUCCESS`, `WARN`, `ERROR`) und automatischer Maskierung von sensiblen Daten (Passwörter, Tokens, JSESSIONID).
+  - Herausgeber / Autor in `free-at-home-metadata.json` und `package.json` auf **`MovingLlama`** umgestellt.
+  - Automatischer Sync der Manifest-Version im Release-Workflow: Die Version im Manifest entspricht nun bei jedem GitHub-Release exakt der GitHub-Release-Tag-Version (z. B. `1.0.1.8`).

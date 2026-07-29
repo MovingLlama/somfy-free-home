@@ -9,7 +9,7 @@
   },
   "url": "https://github.com/MovingLlama/somfy-free-home",
   "supportUrl": "https://github.com/MovingLlama/somfy-free-home",
-  "author": "Stefan Seyerl",
+  "author": "MovingLlama",
   "type": "app",
   "entryPoint": "dist/index.js",
   "beta": false,

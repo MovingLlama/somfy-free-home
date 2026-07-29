@@ -45,6 +45,22 @@ jobs:
           CLEAN_ZIP="somfy-freeathome-addon.zip"
           TAR_NAME="somfy-freeathome-addon-${TAG_NAME}.tar.gz"
           CLEAN_TAR="somfy-freeathome-addon.tar.gz"
+
+          # Sync version in free-at-home-metadata.json to exact GitHub release version tag
+          REAL_VER="${TAG_NAME#v}"
+          echo "Syncing version in free-at-home-metadata.json and package.json to ${REAL_VER}..."
+          node -e "
+            const fs = require('fs');
+            const meta = JSON.parse(fs.readFileSync('free-at-home-metadata.json', 'utf8'));
+            meta.version = '${REAL_VER}';
+            meta.author = 'MovingLlama';
+            fs.writeFileSync('free-at-home-metadata.json', JSON.stringify(meta, null, 2) + '\n');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            pkg.version = '${REAL_VER}';
+            pkg.author = 'MovingLlama';
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
+
           echo "Setting execution permissions for SysAP container compliance..."
           chmod -R 755 dist free-at-home-metadata.json package.json README.md
           echo "Packaging ZIP and TAR.GZ for release ${TAG_NAME}..."
