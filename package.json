@@ -1,0 +1,39 @@
+{
+  "name": "somfy-freeathome-addon",
+  "version": "1.0.0",
+  "description": "Busch-Jaeger free@home SysAP 2 Addon for Somfy 1870755 Connectivity Kit (Rollläden, Fenster, Markisen)",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "package": "npm run build && zip -r somfy-freeathome-addon.zip dist free-at-home-metadata.json package.json README.md"
+  },
+  "keywords": [
+    "freeathome",
+    "sysap",
+    "busch-jaeger",
+    "abb",
+    "somfy",
+    "1870755",
+    "connectivity-kit",
+    "overkiz",
+    "rollladen",
+    "fenster",
+    "markise"
+  ],
+  "author": "Stefan Seyerl",
+  "license": "MIT",
+  "dependencies": {
+    "@busch-jaeger/free-at-home": "^1.1.1",
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}
