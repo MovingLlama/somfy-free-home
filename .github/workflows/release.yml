@@ -39,10 +39,12 @@ jobs:
           if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
             TAG_NAME="${GITHUB_REF_NAME}"
           else
-            TAG_NAME="v${PKG_VERSION}"
+            TAG_NAME="v${PKG_VERSION}.${GITHUB_RUN_NUMBER}"
           fi
           ZIP_NAME="somfy-freeathome-addon-${TAG_NAME}.zip"
-          echo "Packaging ${ZIP_NAME} for version ${PKG_VERSION}..."
+          echo "Setting execution permissions for SysAP container compliance..."
+          chmod -R 755 dist free-at-home-metadata.json manifest.json package.json README.md
+          echo "Packaging ${ZIP_NAME} for release ${TAG_NAME}..."
           zip -j "${ZIP_NAME}" free-at-home-metadata.json manifest.json package.json README.md
           zip -r "${ZIP_NAME}" dist
           echo "PACKAGE_ZIP=${ZIP_NAME}" >> $GITHUB_ENV

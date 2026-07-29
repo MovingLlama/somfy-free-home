@@ -44,8 +44,7 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 6: Manifest Kompatibilität & Standalone Packaging Fix
+### [x] Meilenstein 6: Vollautomatische Release-Neuerstellung bei jedem Push & chmod 755
 - **Erfolgreich umgesetzt**:
-  - Hinzufügen von `manifest.json` für maximale Kompatibilität mit SysAP 2.0 / 3.0 Manifest-Parsern.
-  - `scripts/bump-version.js` aktualisiert, um `package.json`, `free-at-home-metadata.json` und `manifest.json` synchron zu halten.
-  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml) packt sowohl `free-at-home-metadata.json` als auch `manifest.json` an der ZIP-Wurzel.
+  - Automatische Erzeugung eines **einzigartigen neues GitHub Release bei JEDEM Push** durch anhängen der Build-Nummer (`v1.0.1.1`, `v1.0.1.2` etc.).
+  - Explizites Setzen von Ausführungsrechten (`chmod -R 755`) für Dateipfade im ZIP-Archiv für SysAP-Containerkompatibilität.
