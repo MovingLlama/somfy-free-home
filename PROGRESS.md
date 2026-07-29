@@ -44,10 +44,10 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 6: Release Creation & Standalone ZIP Automation Fix
+### [x] Meilenstein 6: GitHub CLI (`gh`) Native Release Automation
 - **Erfolgreich umgesetzt**:
   - `src/index.ts`: Orchestrierung aller Komponenten, Laden/Speichern von Zugangsdaten, periodisches State-Polling (alle 30s) und Befehlsrouting.
   - Standalone Single-File Bundle mit `@vercel/ncc`: Kompiliert gesamten TypeScript-Code & alle Abhängigkeiten in eine einzige `dist/index.js`-Datei.
   - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml):
-    - `fetch-depth: 0` hinzugefügt, um alle Tags und Historie bereitzustellen.
-    - Explicit `target_commitish: ${{ github.sha }}` und `make_latest: 'true'` konfiguriert, damit GitHub zwingend bei jedem Commit auf `main` das GitHub Release (`v1.0.0` etc.) mit dem ZIP-Download unter **Releases** anlegt/aktualisiert.
+    - Umstellung auf die offizielle GitHub CLI `gh release create` / `gh release upload --clobber`.
+    - Garantiert die automatische Erstellung des Releases (`v1.0.0` etc.) direkt über die GitHub API, selbst bei regulären Commits auf `main` ohne manuell vorgegebenen Git-Tag.

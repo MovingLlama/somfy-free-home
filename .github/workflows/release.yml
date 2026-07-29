@@ -56,24 +56,27 @@ jobs:
           path: ${{ env.PACKAGE_ZIP }}
 
       - name: Create or Update GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.get_version.outputs.TAG_NAME }}
-          target_commitish: ${{ github.sha }}
-          name: Somfy Addon Release ${{ steps.get_version.outputs.TAG_NAME }}
-          files: ${{ env.PACKAGE_ZIP }}
-          make_latest: 'true'
-          body: |
-            ## Somfy Connectivity Kit (1870755) free@home SysAP 2 Addon (${{ steps.get_version.outputs.TAG_NAME }})
-            Automatisches Release-Paket für Busch-Jaeger free@home System Access Point 2.0 / 3.0.
-            
-            ### Enthaltene Funktionen:
-            - Anbindung von Somfy Rollläden, Fenstern und Markisen via Connectivity Kit 1870755.
-            - Automatische Registrierung virtueller Aktoren im free@home System Access Point.
-            - Integrierte Web-Konfigurations-Oberfläche.
-            - Semantische Release-Versionierung.
-          draft: false
-          prerelease: false
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ steps.get_version.outputs.TAG_NAME }}
+          PACKAGE_ZIP: ${{ env.PACKAGE_ZIP }}
+        run: |
+          echo "Publishing release for ${TAG_NAME} with ${PACKAGE_ZIP}..."
+          if gh release view "${TAG_NAME}" > /dev/null 2>&1; then
+            echo "Release ${TAG_NAME} exists. Uploading zip asset..."
+            gh release upload "${TAG_NAME}" "${PACKAGE_ZIP}" --clobber
+          else
+            echo "Creating new release ${TAG_NAME}..."
+            gh release create "${TAG_NAME}" "${PACKAGE_ZIP}" \
+              --title "Somfy Addon Release ${TAG_NAME}" \
+              --notes "## Somfy Connectivity Kit (1870755) free@home SysAP 2 Addon (${TAG_NAME})
+
+Automatisches Release-Paket für Busch-Jaeger free@home System Access Point 2.0 / 3.0.
+
+### Enthaltene Funktionen:
+- Anbindung von Somfy Rollläden, Fenstern und Markisen via Connectivity Kit 1870755.
+- Automatische Registrierung virtueller Aktoren im free@home System Access Point.
+- Integrierte Web-Konfigurations-Oberfläche.
+- Semantische Release-Versionierung."
+          fi
 
