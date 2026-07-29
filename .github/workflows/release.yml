@@ -43,7 +43,7 @@ jobs:
           fi
           ZIP_NAME="somfy-freeathome-addon-${TAG_NAME}.zip"
           echo "Packaging ${ZIP_NAME} for version ${PKG_VERSION}..."
-          zip -j "${ZIP_NAME}" free-at-home-metadata.json package.json README.md
+          zip -j "${ZIP_NAME}" free-at-home-metadata.json manifest.json package.json README.md
           zip -r "${ZIP_NAME}" dist
           echo "PACKAGE_ZIP=${ZIP_NAME}" >> $GITHUB_ENV
           echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_OUTPUT

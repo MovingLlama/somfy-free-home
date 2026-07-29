@@ -7,7 +7,7 @@
     "build": "tsc && ncc build src/index.ts -o dist --minify",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
-    "package": "npm run build && zip -r somfy-freeathome-addon.zip dist free-at-home-metadata.json package.json README.md",
+    "package": "npm run build && zip -j somfy-freeathome-addon.zip free-at-home-metadata.json manifest.json package.json README.md && zip -r somfy-freeathome-addon.zip dist",
     "release:patch": "node scripts/bump-version.js patch",
     "release:minor": "node scripts/bump-version.js minor",
     "release:major": "node scripts/bump-version.js major"

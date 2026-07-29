@@ -17,7 +17,7 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 ### [x] Meilenstein 2: Projekt-Setup & Manifest-Erstellung (SysAP Validierung)
 - **Erfolgreich umgesetzt**:
   - Node.js & TypeScript Projekt-Konfiguration (`package.json`, `tsconfig.json`, `package-lock.json`).
-  - Erstellung der SysAP Addon-Manifestdatei `free-at-home-metadata.json` mit allen vom SysAP verlangten Attributen (`apiVersion: "1.0"`, `id`, `executable: "dist/index.js"`, `type: "node"`, `web`, `webUi`, `virtualDevices`, `permissions`).
+  - Erstellung von `free-at-home-metadata.json` und `manifest.json` für Abwärtskompatibilität mit verschiedenen SysAP Firmware-Varianten.
 
 ---
 
@@ -44,7 +44,8 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 6: Release Bump auf v1.0.1 & Packaging Erklärung
+### [x] Meilenstein 6: Manifest Kompatibilität & Standalone Packaging Fix
 - **Erfolgreich umgesetzt**:
-  - Versionierung in `package.json`, `package-lock.json` und `free-at-home-metadata.json` auf `1.0.1` angehoben.
-  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml): GitHub CLI `gh release create` / `upload` erstellt bei Push von Version `1.0.1` das neue GitHub Release `v1.0.1` inklusive des direkten ZIP-Downloads (`somfy-freeathome-addon-v1.0.1.zip`).
+  - Hinzufügen von `manifest.json` für maximale Kompatibilität mit SysAP 2.0 / 3.0 Manifest-Parsern.
+  - `scripts/bump-version.js` aktualisiert, um `package.json`, `free-at-home-metadata.json` und `manifest.json` synchron zu halten.
+  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml) packt sowohl `free-at-home-metadata.json` als auch `manifest.json` an der ZIP-Wurzel.
