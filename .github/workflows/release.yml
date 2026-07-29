@@ -27,11 +27,8 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Compile TypeScript
-        run: npm run build
-
-      - name: Create Production Dependencies
-        run: npm prune --production
+      - name: Compile & Bundle Addon
+        run: npx @vercel/ncc build src/index.ts -o dist --minify
 
       - name: Extract Version & Prepare Packaging
         id: get_version
@@ -44,7 +41,8 @@ jobs:
           fi
           ZIP_NAME="somfy-freeathome-addon-${TAG_NAME}.zip"
           echo "Packaging ${ZIP_NAME} for version ${PKG_VERSION}..."
-          zip -r "${ZIP_NAME}" dist free-at-home-metadata.json package.json README.md node_modules
+          zip -j "${ZIP_NAME}" free-at-home-metadata.json package.json README.md
+          zip -r "${ZIP_NAME}" dist
           echo "PACKAGE_ZIP=${ZIP_NAME}" >> $GITHUB_ENV
           echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_OUTPUT
           echo "PKG_VERSION=${PKG_VERSION}" >> $GITHUB_OUTPUT

@@ -14,10 +14,10 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 2: Projekt-Setup & Manifest-Erstellung
+### [x] Meilenstein 2: Projekt-Setup & Manifest-Erstellung (SysAP Validierung)
 - **Erfolgreich umgesetzt**:
   - Node.js & TypeScript Projekt-Konfiguration (`package.json`, `tsconfig.json`, `package-lock.json`).
-  - Erstellung der SysAP Addon-Manifestdatei `free-at-home-metadata.json` mit ID `somfy-connectivity-kit-addon`, Admin-Web-UI Konfiguration (Port 8080) und Deklaration der virtuellen Gerätetypen (`BlindActuator`, `WindowSensor`).
+  - Erstellung der SysAP Addon-Manifestdatei `free-at-home-metadata.json` mit allen vom SysAP verlangten Attributen (`apiVersion: "1.0"`, `id`, `executable: "dist/index.js"`, `type: "node"`, `webUi`, `virtualDevices`, `permissions`).
 
 ---
 
@@ -32,7 +32,7 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 ### [x] Meilenstein 4: free@home SysAP Virtual Device Manager (Dynamic Method Resolution)
 - **Erfolgreich umgesetzt**:
   - `src/freeathome/types.ts`: Typdefinitionen für free@home Datenpunkte.
-  - `src/freeathome/manager.ts`: `FreeAtHomeManager` zur nativen Einbindung über `@busch-jaeger/free-at-home` / SysAP API mit dynamischem Method-Matching für `createBlindActuatorDevice` / `createBlindDevice` und `createWindowSensorDevice` zur Vermeidung von TS2551 Kompilierungsfehlern.
+  - `src/freeathome/manager.ts`: `FreeAtHomeManager` zur nativen Einbindung über `@busch-jaeger/free-at-home` / SysAP API mit dynamischem Method-Matching für `createBlindActuatorDevice` / `createBlindDevice` und `createWindowSensorDevice`.
   - Registrierung virtueller Aktoren (`BlindActuator` für Rollläden & Markisen, `WindowSensor` für Fenster).
   - Bi-direktionale Datenpunkt-Synchronisation: Weiterleitung von Taster- & App-Befehlen aus free@home an das Connectivity Kit sowie Aktualisierung der Datenpunkte (`odp0000`) im free@home SysAP bei Somfy Statusänderungen.
 
@@ -44,10 +44,9 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 6: Hauptsteuerung & GitHub Actions Release Automation (SemVer Versionierung)
+### [x] Meilenstein 6: Standalone Bundling & SysAP Upload Packaging Fix
 - **Erfolgreich umgesetzt**:
   - `src/index.ts`: Orchestrierung aller Komponenten, Laden/Speichern von Zugangsdaten, periodisches State-Polling (alle 30s) und Befehlsrouting.
-  - `scripts/bump-version.js`: Helper-Script zur synchronen Erhöhung der Version in `package.json` und `free-at-home-metadata.json`.
-  - `npm run release:patch`, `release:minor`, `release:major`: npm-Befehle zur einfachen SemVer-Releasesteuerung.
-  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml): Automatische SemVer-Auflösung und Bündelung von `somfy-freeathome-addon-vX.Y.Z.zip` für GitHub Releases.
-  - `README.md`: Ausführliche Installations- und Bedienungsanleitung für das Busch-Jaeger free@home SysAP 2 System.
+  - Standalone Single-File Bundle mit `@vercel/ncc`: Kompiliert gesamten TypeScript-Code & alle Abhängigkeiten in eine einzige `dist/index.js`-Datei (ohne riesiges `node_modules` Verzeichnis im ZIP).
+  - ZIP Root-Struktur Fix: Garantiert, dass `free-at-home-metadata.json` direkt in der Wurzel des ZIP-Archivs liegt, damit die Entpackung & Validierung im free@home System Access Point einwandfrei gelingt.
+  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml): Standalone Build & Erstellung des sauberen ZIPs bei jedem Release/Update.
