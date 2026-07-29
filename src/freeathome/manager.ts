@@ -46,45 +46,66 @@ export class FreeAtHomeManager {
 
     try {
       if (this.fah) {
+        const fahAny = this.fah as any;
         if (config.type === 'BlindActuator') {
-          const device = await this.fah.createBlindActuatorDevice(config.nativeId, config.displayName);
-          device.setAutoKeepAlive(true);
-          device.setAutoConfirm(true);
+          let device: any = null;
+          if (typeof fahAny.createBlindActuatorDevice === 'function') {
+            device = await fahAny.createBlindActuatorDevice(config.nativeId, config.displayName);
+          } else if (typeof fahAny.createBlindDevice === 'function') {
+            device = await fahAny.createBlindDevice(config.nativeId, config.displayName);
+          } else if (typeof fahAny.createSwitchingActuatorDevice === 'function') {
+            device = await fahAny.createSwitchingActuatorDevice(config.nativeId, config.displayName);
+          }
 
-          device.on('onMoveUpDown', (value: any) => {
-            this.emitCommand({
-              nativeId: config.nativeId,
-              channel: 'ch0000',
-              datapoint: 'idp0000',
-              value: String(value)
-            });
-          });
+          if (device) {
+            if (typeof device.setAutoKeepAlive === 'function') device.setAutoKeepAlive(true);
+            if (typeof device.setAutoConfirm === 'function') device.setAutoConfirm(true);
 
-          device.on('onStopMove', () => {
-            this.emitCommand({
-              nativeId: config.nativeId,
-              channel: 'ch0000',
-              datapoint: 'idp0001',
-              value: '1'
-            });
-          });
+            if (typeof device.on === 'function') {
+              device.on('onMoveUpDown', (value: any) => {
+                this.emitCommand({
+                  nativeId: config.nativeId,
+                  channel: 'ch0000',
+                  datapoint: 'idp0000',
+                  value: String(value)
+                });
+              });
 
-          device.on('onPositionChanged', (value: any) => {
-            this.emitCommand({
-              nativeId: config.nativeId,
-              channel: 'ch0000',
-              datapoint: 'idp0002',
-              value: String(value)
-            });
-          });
+              device.on('onStopMove', () => {
+                this.emitCommand({
+                  nativeId: config.nativeId,
+                  channel: 'ch0000',
+                  datapoint: 'idp0001',
+                  value: '1'
+                });
+              });
 
-          this.virtualDevices.set(config.nativeId, device);
+              device.on('onPositionChanged', (value: any) => {
+                this.emitCommand({
+                  nativeId: config.nativeId,
+                  channel: 'ch0000',
+                  datapoint: 'idp0002',
+                  value: String(value)
+                });
+              });
+            }
+
+            this.virtualDevices.set(config.nativeId, device);
+          }
         } else {
           // Window Sensor / Actuator
-          const device = await this.fah.createDoorWindowSensorDevice(config.nativeId, config.displayName);
-          device.setAutoKeepAlive(true);
-          device.setAutoConfirm(true);
-          this.virtualDevices.set(config.nativeId, device);
+          let device: any = null;
+          if (typeof fahAny.createWindowSensorDevice === 'function') {
+            device = await fahAny.createWindowSensorDevice(config.nativeId, config.displayName);
+          } else if (typeof fahAny.createDoorWindowSensorDevice === 'function') {
+            device = await fahAny.createDoorWindowSensorDevice(config.nativeId, config.displayName);
+          }
+
+          if (device) {
+            if (typeof device.setAutoKeepAlive === 'function') device.setAutoKeepAlive(true);
+            if (typeof device.setAutoConfirm === 'function') device.setAutoConfirm(true);
+            this.virtualDevices.set(config.nativeId, device);
+          }
         }
       } else {
         // Fallback registration log

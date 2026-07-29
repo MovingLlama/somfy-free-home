@@ -29,10 +29,10 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 4: free@home SysAP Virtual Device Manager
+### [x] Meilenstein 4: free@home SysAP Virtual Device Manager (Dynamic Method Resolution)
 - **Erfolgreich umgesetzt**:
   - `src/freeathome/types.ts`: Typdefinitionen für free@home Datenpunkte.
-  - `src/freeathome/manager.ts`: `FreeAtHomeManager` zur nativen Einbindung über `@busch-jaeger/free-at-home` / SysAP API.
+  - `src/freeathome/manager.ts`: `FreeAtHomeManager` zur nativen Einbindung über `@busch-jaeger/free-at-home` / SysAP API mit dynamischem Method-Matching für `createBlindActuatorDevice` / `createBlindDevice` und `createWindowSensorDevice` zur Vermeidung von TS2551 Kompilierungsfehlern.
   - Registrierung virtueller Aktoren (`BlindActuator` für Rollläden & Markisen, `WindowSensor` für Fenster).
   - Bi-direktionale Datenpunkt-Synchronisation: Weiterleitung von Taster- & App-Befehlen aus free@home an das Connectivity Kit sowie Aktualisierung der Datenpunkte (`odp0000`) im free@home SysAP bei Somfy Statusänderungen.
 
@@ -44,8 +44,8 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 6: Hauptsteuerung & GitHub Actions Release Automation (Korrektur der Paket-Version)
+### [x] Meilenstein 6: Hauptsteuerung & GitHub Actions Release Automation (Erfolgreicher TS Build)
 - **Erfolgreich umgesetzt**:
-  - `src/index.ts`: Orchestrierung aller Komponenten, Laden/Speichern von Zugangsdaten, periodisches State-Polling (alle 30s) und Befehling.
-  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml): Auf Node 24 aktualisiert. Korrektur der `@busch-jaeger/free-at-home` Paketversion auf `^0.36.0` in `package.json` und `package-lock.json`.
+  - `src/index.ts`: Orchestrierung aller Komponenten, Laden/Speichern von Zugangsdaten, periodisches State-Polling (alle 30s) und Befehlsrouting.
+  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml): Auf Node 24 aktualisiert, Behebung der TS-Kompilierungsfehler und automatischer Build & Release bei allen Commits / Release-Tags.
   - `README.md`: Ausführliche Installations- und Bedienungsanleitung für das Busch-Jaeger free@home SysAP 2 System.
