@@ -43,21 +43,34 @@ jobs:
           fi
           ZIP_NAME="somfy-freeathome-addon-${TAG_NAME}.zip"
           CLEAN_ZIP="somfy-freeathome-addon.zip"
+          TAR_NAME="somfy-freeathome-addon-${TAG_NAME}.tar.gz"
+          CLEAN_TAR="somfy-freeathome-addon.tar.gz"
           echo "Setting execution permissions for SysAP container compliance..."
           chmod -R 755 dist free-at-home-metadata.json package.json README.md
-          echo "Packaging ${ZIP_NAME} and ${CLEAN_ZIP} for release ${TAG_NAME}..."
+          echo "Packaging ZIP and TAR.GZ for release ${TAG_NAME}..."
           zip -j "${ZIP_NAME}" free-at-home-metadata.json package.json README.md dist/index.js
           cp "${ZIP_NAME}" "${CLEAN_ZIP}"
+          
+          # Create tar.gz archive (flat root)
+          tar -czf "${TAR_NAME}" -C dist index.js -C .. free-at-home-metadata.json package.json README.md
+          cp "${TAR_NAME}" "${CLEAN_TAR}"
+
           echo "PACKAGE_ZIP=${ZIP_NAME}" >> $GITHUB_ENV
           echo "CLEAN_ZIP=${CLEAN_ZIP}" >> $GITHUB_ENV
+          echo "PACKAGE_TAR=${TAR_NAME}" >> $GITHUB_ENV
+          echo "CLEAN_TAR=${CLEAN_TAR}" >> $GITHUB_ENV
           echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_OUTPUT
           echo "PKG_VERSION=${PKG_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: somfy-freeathome-addon-zip
-          path: ${{ env.PACKAGE_ZIP }}
+          name: somfy-freeathome-addon-assets
+          path: |
+            ${{ env.PACKAGE_ZIP }}
+            ${{ env.CLEAN_ZIP }}
+            ${{ env.PACKAGE_TAR }}
+            ${{ env.CLEAN_TAR }}
 
       - name: Create or Update GitHub Release
         env:
@@ -65,15 +78,17 @@ jobs:
           TAG_NAME: ${{ steps.get_version.outputs.TAG_NAME }}
           PACKAGE_ZIP: ${{ env.PACKAGE_ZIP }}
           CLEAN_ZIP: ${{ env.CLEAN_ZIP }}
+          PACKAGE_TAR: ${{ env.PACKAGE_TAR }}
+          CLEAN_TAR: ${{ env.CLEAN_TAR }}
         run: |
-          echo "Publishing release for ${TAG_NAME} with ${PACKAGE_ZIP} and ${CLEAN_ZIP}..."
+          echo "Publishing release for ${TAG_NAME} with ZIP and TAR.GZ assets..."
           RELEASE_TITLE="Somfy Addon Release ${TAG_NAME}"
-          RELEASE_BODY="Automatisches Release-Paket für Busch-Jaeger free@home System Access Point 2.0 / 3.0."
+          RELEASE_BODY="Automatisches Release-Paket für Busch-Jaeger free@home System Access Point 2.0 / 3.0 (enthält .tar.gz und .zip)."
 
           if gh release view "${TAG_NAME}" > /dev/null 2>&1; then
-            echo "Release ${TAG_NAME} exists. Uploading zip assets..."
-            gh release upload "${TAG_NAME}" "${PACKAGE_ZIP}" "${CLEAN_ZIP}" --clobber
+            echo "Release ${TAG_NAME} exists. Uploading assets..."
+            gh release upload "${TAG_NAME}" "${PACKAGE_ZIP}" "${CLEAN_ZIP}" "${PACKAGE_TAR}" "${CLEAN_TAR}" --clobber
           else
             echo "Creating new release ${TAG_NAME}..."
-            gh release create "${TAG_NAME}" "${PACKAGE_ZIP}" "${CLEAN_ZIP}" --title "${RELEASE_TITLE}" --notes "${RELEASE_BODY}"
+            gh release create "${TAG_NAME}" "${PACKAGE_ZIP}" "${CLEAN_ZIP}" "${PACKAGE_TAR}" "${CLEAN_TAR}" --title "${RELEASE_TITLE}" --notes "${RELEASE_BODY}"
           fi

@@ -14,12 +14,10 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 
 ---
 
-### [x] Meilenstein 2: Log-Analyse & Ziel-Audit (Diff-Analyse zu ha-free-at-home-plugin)
+### [x] Meilenstein 2: Log-Analyse & SysAP Packaging (.tar.gz & .zip Dual Release)
 - **Erfolgreich umgesetzt**:
-  - Exakter Quellcode- & Manifest-Vergleich mit der funktionierenden Referenz-Integration (`piushartmann/ha-free-at-home-plugin`).
-  - **Erkenntnis 1 (ID Match)**: `free-at-home-metadata.json` (`"id"`) MUSS 1:1 mit `package.json` (`"name"`) übereinstimmen (`somfy-freeathome-addon`). Ein Mismatch führte zur Entpacker-Ablehnung im SysAP!
-  - **Erkenntnis 2 (Keine doppelten Manifeste)**: Entfernen der redundant erstellten `manifest.json`, da doppelte Manifest-Dateien im ZIP-Root als valider Mehrfach-Header-Konflikt vom Parser abgelehnt wurden.
-  - **Erkenntnis 3 (Node.js ES2018 Transpilation Target)**: Umstellung des `@vercel/ncc` Bundlers auf `--target es2018`, um neuere JavaScript Syntax (ES2022+), die auf dem älteren SysAP Node-Runtime Environment Syntax-Errors auslöst, auf abwärtskompatibles ES2018 zu transpileren.
+  - **Erkenntnis (`.tar.gz` Archiv-Format)**: Da der Busch-Jaeger System Access Point auf einem Yocto Linux-Betriebssystem läuft, erwartet der interne Dienst `mrha_scriptinghost` nativerweise **`tar.gz` Archiv-Dateien (`tar -xzf`)**.
+  - Anpassung der GitHub Release Pipeline ([.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml)): Das Release generiert ab sofort automatisch sowohl **`.tar.gz`** als auch **`.zip`** Archive (`somfy-freeathome-addon.tar.gz` & `somfy-freeathome-addon.zip`).
 
 ---
 
@@ -43,9 +41,3 @@ Dieses Dokument dient der Protokollierung aller erreichten Meilensteine und Erfo
 ### [x] Meilenstein 5: Web UI Konfigurations-Interface & Standalone API Modus
 - **Erfolgreich umgesetzt**:
   - `src/web/server.ts`: Express-basierte Admin-Oberfläche auf Port 8080 zur bequemen Eingabe der Somfy Account-Zugangsdaten (E-Mail/Passwort), Verbindungsprüfung und tabellarischen Übersicht aller gekoppelten Somfy Rollläden, Fenster und Markisen.
-
----
-
-### [x] Meilenstein 6: Clean Filename ZIP & Automated Releases
-- **Erfolgreich umgesetzt**:
-  - [.github/workflows/release.yml](file:///home/stefan-seyerl/repos/somfy@free@home/.github/workflows/release.yml) erstellt nun ein flaches, ES2018-kompatibles **`somfy-freeathome-addon.zip`** ohne Punkte im Dateinamen.
